@@ -690,7 +690,7 @@ class Insightly():
         request.get_method = lambda: method
         if method == 'PUT' or method == 'POST':
             request.add_header('Content-Type', 'application/json')
-            result = urllib.request.urlopen(request, data)
+            result = urllib.request.urlopen(request, data.encode("utf-8"))
         else:
             result = urllib.request.urlopen(request)
         text = result.read().decode('utf-8')
