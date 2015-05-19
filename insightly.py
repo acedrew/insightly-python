@@ -690,9 +690,19 @@ class Insightly():
         request.get_method = lambda: method
         if method == 'PUT' or method == 'POST':
             request.add_header('Content-Type', 'application/json')
-            result = urllib.request.urlopen(request, data.encode("utf-8"))
+            try:
+                result = urllib.request.urlopen(request, data.encode("utf-8"))
+            except Exception as e:
+                print("request failed")
+                print(request.get_full_url())
+                raise e
         else:
-            result = urllib.request.urlopen(request)
+            try:
+                result = urllib.request.urlopen(request)
+            except Exception as e:
+                print("request failed")
+                print(request.get_full_url())
+                raise e
         text = result.read().decode('utf-8')
         return text
 
@@ -865,8 +875,11 @@ class Insightly():
                 querystring += '?ids='
             else:
                 querystring += '&ids='
-            for i in ids:
-                querystring += i + ','
+            for i, e in enumerate(ids):
+                querystring += e
+                if i == len(ids) - 1:
+                    continue
+                querystring += ','
         text = self.generateRequest('/v2.1/Contacts' + querystring, 'GET', '')
         return self.dictToList(json.loads(text))
 
